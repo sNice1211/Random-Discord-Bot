@@ -408,19 +408,13 @@ async def on_ready():
     bot.start_time = datetime.now()
     
     try:
-        # Only sync guild commands, not global commands
-        if bot.guilds:
-            for guild in bot.guilds:
-                try:
-                    # Sync commands to this specific guild
-                    synced = await bot.tree.sync(guild=discord.Object(id=guild.id))
-                    logger.info(f"Synced {len(synced)} command(s) to guild: {guild.name} (ID: {guild.id})")
-                except Exception as e:
-                    logger.error(f"Failed to sync commands to guild {guild.name} (ID: {guild.id}): {e}")
-        else:
-            logger.warning("Bot is not in any guilds. No commands were synced.")
+        # Sync commands globally instead of per guild
+        synced = await bot.tree.sync()
+        logger.info(f"Synced {len(synced)} command(s) globally")
+        logger.info("Note: Global commands may take up to 1 hour to appear in all servers")
     except Exception as e:
-        logger.error(f"Failed to sync commands: {e}")
+        logger.error(f"Failed to sync global commands: {e}")
+
 
 # Track errors in commands
 @bot.tree.error
